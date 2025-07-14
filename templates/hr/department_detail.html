@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Department Details - {{ department.name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h3">Department: {{ department.name }}</h1>
+            <p class="text-muted">{{ department.description|default:"No description available." }}</p>
+        </div>
+        <div class="col-auto">
+            <a href="{% url 'hr:department_edit' department.id %}" class="btn btn-outline-primary"><i class="fas fa-edit me-2"></i>Edit</a>
+            <button type="button" class="btn btn-outline-danger" onclick="confirmDelete()"><i class="fas fa-trash me-2"></i>Delete</button>
+            <a href="{% url 'hr:department_list' %}" class="btn btn-outline-secondary"><i class="fas fa-arrow-left me-2"></i>Back to List</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Department Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>Location:</strong> {{ department.location|default:"N/A" }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Budget:</strong> ${{ department.budget|floatformat:2 }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Status:</strong>
+                        {% if department.is_active %}
+                            <span class="badge bg-success">Active</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Inactive</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Manager</h5>
+                </div>
+                <div class="card-body">
+                    {% if department.manager %}
+                    <div class="d-flex align-items-center">
+                        <div class="avatar-lg me-3">
+                            {% if department.manager.photo %}
+                                <img src="{{ department.manager.photo.url }}" alt="{{ department.manager.full_name }}" class="avatar-img rounded-circle">
+                            {% else %}
+                                <div class="avatar-title bg-primary rounded-circle">
+                                    {{ department.manager.first_name|first }}{{ department.manager.last_name|first }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <a href="{% url 'hr:employee_detail' department.manager.id %}" class="text-decoration-none">
+                                {{ department.manager.full_name }}
+                            </a>
+                            <p class="text-muted mb-0">{{ department.manager.position.title|default:"N/A" }}</p>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No manager assigned.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Employees</h5>
+                </div>
+                <div class="card-body">
+                    {% if department.employee_set.count > 0 %}
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Employee</th>
+                                    <th>Position</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for employee in department.employee_set.all %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-xs me-3">
+                                                {% if employee.photo %}
+                                                    <img src="{{ employee.photo.url }}" alt="{{ employee.full_name }}" class="avatar-img rounded-circle">
+                                                {% else %}
+                                                    <div class="avatar-title bg-secondary rounded-circle">
+                                                        {{ employee.first_name|first }}{{ employee.last_name|first }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <a href="{% url 'hr:employee_detail' employee.id %}" class="text-decoration-none">
+                                                    {{ employee.full_name }}
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ employee.position.title|default:"N/A" }}</td>
+                                    <td>{{ employee.user.email }}</td>
+                                    <td>{{ employee.contact_phone|default:"N/A" }}</td>
+                                    <td>{{ employee.get_employment_status_display }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No employees found in this department.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function confirmDelete() {
+    if (confirm('Are you sure you want to delete the department "{{ department.name }}"?\n\nThis action cannot be undone and will affect all employees in this department.')) {
+        // Create a form to submit the DELETE request
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{% url "hr:department_delete" department.id %}';
+        
+        // Add CSRF token
+        const csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = 'csrfmiddlewaretoken';
+        csrfToken.value = '{{ csrf_token }}';
+        form.appendChild(csrfToken);
+        
+        // Submit the form
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+// Search functionality (if needed for employee table)
+if (document.getElementById('searchInput')) {
+    document.getElementById('searchInput').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const rows = document.querySelectorAll('tbody tr');
+        
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? '' : 'none';
+        });
+    });
+}
+</script>
+{% endblock %}
+

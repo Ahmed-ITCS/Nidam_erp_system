@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}Vendor Summary Report{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3">{{ report_type }}</h1>
+                <div>
+                    <a href="{% url 'accounting:reports' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Reports
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-building me-2"></i>{{ report_type }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info" role="alert">
+                        <i class="fas fa-info-circle me-2"></i>
+                        {{ message }}
+                    </div>
+                    
+                    <!-- Report filters will go here -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <label for="date_from" class="form-label">From Date</label>
+                            <input type="date" class="form-control" id="date_from" name="date_from">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="date_to" class="form-label">To Date</label>
+                            <input type="date" class="form-control" id="date_to" name="date_to">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="vendor" class="form-label">Vendor</label>
+                            <select class="form-select" id="vendor" name="vendor">
+                                <option value="">All Vendors</option>
+                                <!-- Vendor options will be populated here -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <button type="button" class="btn btn-primary" onclick="generateReport()">
+                                <i class="fas fa-chart-bar me-2"></i>Generate Report
+                            </button>
+                            <button type="button" class="btn btn-success" onclick="exportReport('excel')">
+                                <i class="fas fa-file-excel me-2"></i>Export to Excel
+                            </button>
+                            <button type="button" class="btn btn-danger" onclick="exportReport('pdf')">
+                                <i class="fas fa-file-pdf me-2"></i>Export to PDF
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Report results will be displayed here -->
+                    <div id="report-results" class="mt-4" style="display: none;">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Vendor</th>
+                                        <th>Total Spent</th>
+                                        <th>Number of Transactions</th>
+                                        <th>Average Transaction</th>
+                                        <th>Outstanding Balance</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Report data will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function generateReport() {
+    // This would handle the report generation
+    console.log('Generating vendor summary report...');
+    document.getElementById('report-results').style.display = 'block';
+}
+
+function exportReport(format) {
+    // This would handle the export functionality
+    console.log('Exporting report as:', format);
+}
+</script>
+{% endblock %}

@@ -113,3 +113,69 @@ def budget_detail(request, pk):
 @login_required
 def reports(request):
     return render(request, 'accounting/reports.html')
+
+@login_required
+def budget_variance_report(request):
+    """Generate budget variance report comparing actual vs budgeted amounts"""
+    # This is a placeholder implementation
+    # You'll need to implement the actual report logic
+    context = {
+        'report_type': 'Budget Variance Report',
+        'message': 'Budget variance report functionality will be implemented here.'
+    }
+    return render(request, 'accounting/budget_variance_report.html', context)
+
+@login_required
+def vendor_summary_report(request):
+    """Generate vendor summary report"""
+    # This is a placeholder implementation
+    # You'll need to implement the actual report logic
+    context = {
+        'report_type': 'Vendor Summary Report',
+        'message': 'Vendor summary report functionality will be implemented here.'
+    }
+    return render(request, 'accounting/vendor_summary_report.html', context)
+
+@login_required
+def tax_summary_report(request):
+    """Generate tax summary report"""
+    # This is a placeholder implementation
+    # You'll need to implement the actual report logic
+    context = {
+        'report_type': 'Tax Summary Report',
+        'message': 'Tax summary report functionality will be implemented here.'
+    }
+    return render(request, 'accounting/tax_summary_report.html', context)
+
+@login_required
+def balance_sheet_report(request):
+    """Generate balance sheet report"""
+    # This is a placeholder implementation
+    # You'll need to implement the actual report logic
+    context = {
+        'report_type': 'Balance Sheet',
+        'message': 'Balance sheet report functionality will be implemented here.'
+    }
+    return render(request, 'accounting/balance_sheet_report.html', context)
+
+@login_required
+def profit_loss_report(request):
+    """Generate profit and loss report"""
+    # This is a placeholder implementation
+    # You'll need to implement the actual report logic
+    context = {
+        'report_type': 'Profit & Loss Statement',
+        'message': 'Profit & Loss report functionality will be implemented here.'
+    }
+    return render(request, 'accounting/profit_loss_report.html', context)
+
+@login_required
+def cash_flow_report(request):
+    """Generate cash flow report"""
+    # This is a placeholder implementation
+    # You'll need to implement the actual report logic
+    context = {
+        'report_type': 'Cash Flow Statement',
+        'message': 'Cash flow report functionality will be implemented here.'
+    }
+    return render(request, 'accounting/cash_flow_report.html', context)

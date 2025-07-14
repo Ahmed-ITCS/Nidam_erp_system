@@ -23,4 +23,10 @@ urlpatterns = [
     path('budgets/add/', views.budget_add, name='budget_add'),
     path('budgets/<int:pk>/', views.budget_detail, name='budget_detail'),
     path('reports/', views.reports, name='reports'),
+    path('reports/budget-variance/', views.budget_variance_report, name='budget_variance_report'),
+    path('reports/vendor-summary/', views.vendor_summary_report, name='vendor_summary_report'),
+    path('reports/tax-summary/', views.tax_summary_report, name='tax_summary_report'),
+    path('reports/balance-sheet/', views.balance_sheet_report, name='balance_sheet_report'),
+    path('reports/profit-loss/', views.profit_loss_report, name='profit_loss_report'),
+    path('reports/cash-flow/', views.cash_flow_report, name='cash_flow_report'),
 ]

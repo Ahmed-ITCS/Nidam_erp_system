@@ -3,98 +3,98 @@
 {% block page_title %}Training Programs{% endblock %}
 
 {% block content %}
-cdiv class="d-flex justify-content-between align-items-center mb-4"e
-    ch1 class="h3 mb-0"eTraining Programs/ch1e
-    ca href="{% url 'hr:training_add' %}" class="btn btn-primary"e
-        ci class="fas fa-plus me-2"e/cieAdd Program
-    /cae
-/dive
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Training Programs</h1>
+    <a href="{% url 'hr:training_add' %}" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Add Program
+    </a>
+</div>
 
-cdiv class="card"e
-    cdiv class="card-header"e
-        cdiv class="row align-items-center"e
-            cdiv class="col"e
-                ch5 class="card-title mb-0"eAll Training Programs/ch5e
-            /dive
-            cdiv class="col-auto"e
-                cdiv class="input-group"e
-                    cinput type="text" class="form-control" placeholder="Search programs..." id="searchInput"e
-                    cbutton class="btn btn-outline-secondary" type="button"e
-                        ci class="fas fa-search"e/cie
-                    /buttone
-                /dive
-            /dive
-        /dive
-    /dive
-    cdiv class="card-body p-0"e
+<div class="card">
+    <div class="card-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h5 class="card-title mb-0">All Training Programs</h5>
+            </div>
+            <div class="col-auto">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search programs..." id="searchInput">
+                    <button class="btn btn-outline-secondary" type="button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-0">
         {% if training_programs %}
-            cdiv class="table-responsive"e
-                ctable class="table table-hover mb-0"e
-                    cthead class="table-light"e
-                        ctre
-                            ctheProgram Name/cthe
-                            ctheStart Date/cthe
-                            ctheEnd Date/cthe
-                            ctheTrainer/cthe
-                            ctheLocation/cthe
-                            ctheParticipants/cthe
-                            ctheStatus/cthe
-                            ctheActions/cthe
-                        /ctre
-                    /theade
-                    ctbodye
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Program Name</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Trainer</th>
+                            <th>Location</th>
+                            <th>Participants</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
                         {% for program in training_programs %}
-                        ctre
-                            ctde{{ program.name }}/tde
-                            ctde{{ program.start_date|date:"M d, Y" }}/tde
-                            ctde{{ program.end_date|date:"M d, Y" }}/tde
-                            ctde{{ program.trainer }}/tde
-                            ctde{{ program.location }}/tde
-                            ctde{{ program.participants.count }}/tde
-                            ctde
+                        <tr>
+                            <td>{{ program.name }}</td>
+                            <td>{{ program.start_date|date:"M d, Y" }}</td>
+                            <td>{{ program.end_date|date:"M d, Y" }}</td>
+                            <td>{{ program.trainer }}</td>
+                            <td>{{ program.location }}</td>
+                            <td>{{ program.participants.count }}</td>
+                            <td>
                                 {% if program.status == 'upcoming' %}
-                                    cspan class="badge bg-info"eUpcoming/spane
+                                    <span class="badge bg-info">Upcoming</span>
                                 {% elif program.status == 'ongoing' %}
-                                    cspan class="badge bg-success"eOngoing/spane
+                                    <span class="badge bg-success">Ongoing</span>
                                 {% elif program.status == 'completed' %}
-                                    cspan class="badge bg-primary"eCompleted/spane
+                                    <span class="badge bg-primary">Completed</span>
                                 {% endif %}
-                            /tde
-                            ctde
-                                cdiv class="btn-group btn-group-sm"e
-                                    ca href="{% url 'hr:training_edit' program.id %}" class="btn btn-outline-primary"e
-                                        ci class="fas fa-edit"e/cie
-                                    /cae
-                                    ca href="{% url 'hr:training_detail' program.id %}" class="btn btn-outline-info"e
-                                        ci class="fas fa-eye"e/cie
-                                    /cae
-                                    cbutton class="btn btn-outline-danger" onclick="deleteTrainingProgram({{ program.id }})"e
-                                        ci class="fas fa-trash"e/cie
-                                    /buttone
-                                /dive
-                            /tde
-                        /tre
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{% url 'hr:training_edit' program.id %}" class="btn btn-outline-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'hr:training_detail' program.id %}" class="btn btn-outline-info">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <button class="btn btn-outline-danger" onclick="deleteTrainingProgram({{ program.id }})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
                         {% endfor %}
-                    /tbodye
-                /tablee
-            /dive
+                    </tbody>
+                </table>
+            </div>
         {% else %}
-            cdiv class="text-center py-5"e
-                ci class="fas fa-chalkboard-teacher fa-3x text-muted mb-3"e/cie
-                ch5 class="text-muted"eNo training programs found/ch5e
-                cp class="text-muted"eAdd your first training program./cpe
-                ca href="{% url 'hr:training_add' %}" class="btn btn-primary"e
-                    ci class="fas fa-plus me-2"e/cieAdd Program
-                /cae
-            /dive
+            <div class="text-center py-5">
+                <i class="fas fa-chalkboard-teacher fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No training programs found</h5>
+                <p class="text-muted">Add your first training program.</p>
+                <a href="{% url 'hr:training_add' %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Add Program
+                </a>
+            </div>
         {% endif %}
-    /dive
-/dive
+    </div>
+</div>
 
 {% endblock %}
 
 {% block scripts %}
-cscripte
+<script>
 document.getElementById('searchInput').addEventListener('input', function() {
     const searchTerm = this.value.toLowerCase();
     const rows = document.querySelectorAll('tbody tr');
@@ -119,5 +119,5 @@ function deleteTrainingProgram(programId) {
         });
     }
 }
-/scripte
+</script>
 {% endblock %}

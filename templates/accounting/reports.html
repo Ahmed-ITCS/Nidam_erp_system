@@ -51,12 +51,12 @@
             <div class="card-body">
                 <p class="text-muted mb-3">View your company's financial position</p>
                 <div class="d-grid gap-2">
-                    a href="#" class="btn btn-outline-success" onclick="generateReport('balance_sheet')"b
-                        i class="fas fa-chart-bar me-2"/iView Report
-                    /a
-                    a href="#" class="btn btn-outline-secondary" onclick="generateReport('balance_sheet_trend')"
-                        i class="fas fa-trending-up me-2"/iTrend Analysis
-                    /a
+<a href="{% url 'accounting:balance_sheet_report' %}" class="btn btn-outline-success">
+    <i class="fas fa-chart-bar me-2"></i>View Report
+</a>
+<a href="#" class="btn btn-outline-secondary" onclick="generateReport('balance_sheet_trend')">
+    <i class="fas fa-trending-up me-2"></i>Trend Analysis
+</a>
                 </div>
             </div>
         </div>

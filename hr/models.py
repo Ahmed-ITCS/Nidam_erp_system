@@ -8,12 +8,29 @@ class Department(models.Model):
     description = models.TextField(blank=True)
     manager = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     budget = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    location = models.CharField(max_length=100, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
+    
+    @property
+    def employee_count(self):
+        return self.employee_set.filter(employment_status='active').count()
+    
+    @property
+    def capacity_percentage(self):
+        # Assuming max capacity of 50 employees per department
+        max_capacity = 50
+        return min(100, (self.employee_count / max_capacity) * 100) if max_capacity > 0 else 0
+    
+    @property
+    def budget_spent(self):
+        # This would be calculated based on actual expenses
+        # For now, returning a sample calculation
+        return self.budget * Decimal('0.3')  # 30% of budget spent as example
 
 class Position(models.Model):
     title = models.CharField(max_length=100)

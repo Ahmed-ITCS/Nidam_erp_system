@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Delete Employee - {{ employee.full_name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Confirm Employee Deletion
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <div class="employee-avatar mb-3">
+                                {% if employee.photo %}
+                                    <img src="{{ employee.photo.url }}" alt="{{ employee.full_name }}" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                                {% else %}
+                                    <div class="avatar-placeholder bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width: 100px; height: 100px; font-size: 2rem;">
+                                        {{ employee.first_name|first }}{{ employee.last_name|first }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <h4 class="text-danger mb-3">
+                                <i class="fas fa-trash-alt me-2"></i>
+                                Delete Employee Record
+                            </h4>
+                            <p class="lead mb-3">
+                                Are you sure you want to delete <strong>{{ employee.full_name }}</strong>?
+                            </p>
+                            <div class="alert alert-warning" role="alert">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <strong>Warning:</strong> This action cannot be undone. All associated data will be permanently deleted.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Employee Details -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h6 class="text-muted mb-3">Employee Information</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <strong>Employee ID:</strong> {{ employee.employee_id }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>Department:</strong> {{ employee.department.name|default:"N/A" }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>Position:</strong> {{ employee.position.title|default:"N/A" }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>Employment Status:</strong> {{ employee.get_employment_status_display }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <strong>Email:</strong> {{ employee.user.email }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>Emergency Contact:</strong> {{ employee.emergency_contact_phone|default:"N/A" }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>Hire Date:</strong> {{ employee.hire_date|date:"M d, Y" }}
+                                    </div>
+                                    <div class="mb-3">
+                                        <strong>Salary:</strong> ${{ employee.salary|floatformat:2 }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Associated Data Warning -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="alert alert-danger" role="alert">
+                                <h6 class="alert-heading">
+                                    <i class="fas fa-database me-2"></i>
+                                    Data That Will Be Deleted
+                                </h6>
+                                <ul class="mb-0">
+                                    <li>Employee personal information and profile</li>
+                                    <li>All attendance records</li>
+                                    <li>Leave requests and approvals</li>
+                                    <li>Performance reviews</li>
+                                    <li>Training program participations</li>
+                                    <li>Payroll records</li>
+                                    <li>Any other associated HR data</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Confirmation Form -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="confirmDelete" required>
+                                    <label class="form-check-label" for="confirmDelete">
+                                        I understand that this action cannot be undone and all associated data will be permanently deleted.
+                                    </label>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between">
+                                    <a href="{% url 'hr:employee_detail' employee.id %}" class="btn btn-secondary">
+                                        <i class="fas fa-arrow-left me-2"></i>
+                                        Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-danger" id="deleteBtn" disabled>
+                                        <i class="fas fa-trash-alt me-2"></i>
+                                        Delete Employee
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('confirmDelete').addEventListener('change', function() {
+    const deleteBtn = document.getElementById('deleteBtn');
+    if (this.checked) {
+        deleteBtn.disabled = false;
+        deleteBtn.classList.remove('btn-secondary');
+        deleteBtn.classList.add('btn-danger');
+    } else {
+        deleteBtn.disabled = true;
+        deleteBtn.classList.remove('btn-danger');
+        deleteBtn.classList.add('btn-secondary');
+    }
+});
+
+// Double confirmation on form submit
+document.querySelector('form').addEventListener('submit', function(e) {
+    if (!confirm('Are you absolutely sure you want to delete {{ employee.full_name }}? This action cannot be undone.')) {
+        e.preventDefault();
+    }
+});
+</script>
+{% endblock %}

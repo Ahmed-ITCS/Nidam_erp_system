@@ -3,121 +3,121 @@
 {% block page_title %}Performance Review List{% endblock %}
 
 {% block content %}
-cdiv class="d-flex justify-content-between align-items-center mb-4"e
-    ch1 class="h3 mb-0"ePerformance Reviews/ch1e
-    ca href="{% url 'hr:performance_review_add' %}" class="btn btn-primary"e
-        ci class="fas fa-plus me-2"e/cieNew Review
-    /cae
-/dive
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Performance Reviews</h1>
+    <a href="{% url 'hr:performance_review_add' %}" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>New Review
+    </a>
+</div>
 
-cdiv class="card"e
-    cdiv class="card-header"e
-        cdiv class="row align-items-center"e
-            cdiv class="col"e
-                ch5 class="card-title mb-0"eAll Performance Reviews/ch5e
-            /dive
-            cdiv class="col-auto"e
-                cdiv class="input-group"e
-                    cinput type="text" class="form-control" placeholder="Search reviews..." id="searchInput"e
-                    cbutton class="btn btn-outline-secondary" type="button"e
-                        ci class="fas fa-search"e/cie
-                    /buttone
-                /dive
-            /dive
-        /dive
-    /dive
-    cdiv class="card-body p-0"e
+<div class="card">
+    <div class="card-header">
+        <div class="row align-items-center">
+            <div class="col">
+                <h5 class="card-title mb-0">All Performance Reviews</h5>
+            </div>
+            <div class="col-auto">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search reviews..." id="searchInput">
+                    <button class="btn btn-outline-secondary" type="button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-0">
         {% if performance_reviews %}
-            cdiv class="table-responsive"e
-                ctable class="table table-hover mb-0"e
-                    cthead class="table-light"e
-                        ctre
-                            ctheEmployee/cthe
-                            ctheReview Date/cthe
-                            ctheReviewer/cthe
-                            ctheScore/cthe
-                            ctheComments/cthe
-                            ctheStatus/cthe
-                            ctheActions/cthe
-                        /ctre
-                    /theade
-                    ctbodye
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Employee</th>
+                            <th>Review Date</th>
+                            <th>Reviewer</th>
+                            <th>Score</th>
+                            <th>Comments</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
                         {% for review in performance_reviews %}
-                        ctre
-                            ctde
-                                cdiv class="d-flex align-items-center"e
-                                    cdiv class="avatar-sm me-3"e
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm me-3">
                                         {% if review.employee.photo %}
-                                            cimg src="{{ review.employee.photo.url }}" alt="{{ review.employee.full_name }}" class="avatar-img rounded-circle"e
+                                            <img src="{{ review.employee.photo.url }}" alt="{{ review.employee.full_name }}" class="avatar-img rounded-circle">
                                         {% else %}
-                                            cdiv class="avatar-title bg-primary rounded-circle"e
+                                            <div class="avatar-title bg-primary rounded-circle">
                                                 {{ review.employee.first_name|first }}{{ review.employee.last_name|first }}
-                                            /dive
+                                            </div>
                                         {% endif %}
-                                    /dive
-                                    cdive
-                                        ca href="{% url 'hr:employee_detail' review.employee.id %}" class="text-decoration-none fw-medium"e
+                                    </div>
+                                    <div>
+                                        <a href="{% url 'hr:employee_detail' review.employee.id %}" class="text-decoration-none fw-medium">
                                             {{ review.employee.full_name }}
-                                        /cae
-                                    /dive
-                                /dive
-                            /tde
-                            ctde
-                                cspan class="text-muted"e{{ review.date|date:"M d, Y" }}/cspane
-                            /tde
-                            ctde
-                                span class="text-muted"e{{ review.reviewer.full_name }}/spane
-                            /tde
-                            ctde
-                                cspan class="fw-medium"e{{ review.score }}/cspane
-                            /tde
-                            ctde
-                                cspan class="text-muted"e{{ review.comments|truncatechars:50 }}/cspane
-                            /tde
-                            ctde
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="text-muted">{{ review.date|date:"M d, Y" }}</span>
+                            </td>
+                            <td>
+                                <span class="text-muted">{{ review.reviewer.full_name }}</span>
+                            </td>
+                            <td>
+                                <span class="fw-medium">{{ review.score }}</span>
+                            </td>
+                            <td>
+                                <span class="text-muted">{{ review.comments|truncatechars:50 }}</span>
+                            </td>
+                            <td>
                                 {% if review.status == 'pending' %}
-                                    cspan class="badge bg-warning"ePending/spane
+                                    <span class="badge bg-warning">Pending</span>
                                 {% elif review.status == 'completed' %}
-                                    cspan class="badge bg-success"eCompleted/spane
+                                    <span class="badge bg-success">Completed</span>
                                 {% elif review.status == 'canceled' %}
-                                    cspan class="badge bg-danger"eCanceled/spane
+                                    <span class="badge bg-danger">Canceled</span>
                                 {% endif %}
-                            /tde
-                            ctde
-                                cdiv class="btn-group btn-group-sm"e
-                                    ca href="{% url 'hr:performance_review_edit' review.id %}" class="btn btn-outline-primary"e
-                                        ci class="fas fa-edit"e/cie
-                                    /cae
-                                    ca href="{% url 'hr:performance_review_detail' review.id %}" class="btn btn-outline-info"e
-                                        ci class="fas fa-eye"e/cie
-                                    /cae
-                                    cbutton class="btn btn-outline-danger" onclick="deleteReview({{ review.id }})"e
-                                        ci class="fas fa-trash"e/cie
-                                    /buttone
-                                /deve
-                            /tde
-                        /tre
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{% url 'hr:performance_review_edit' review.id %}" class="btn btn-outline-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'hr:performance_review_detail' review.id %}" class="btn btn-outline-info">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <button class="btn btn-outline-danger" onclick="deleteReview({{ review.id }})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
                         {% endfor %}
-                    /tbodye
-                /tablee
-            /dive
+                    </tbody>
+                </table>
+            </div>
         {% else %}
-            cdiv class="text-center py-5"e
-                ci class="fas fa-star fa-3x text-muted mb-3"e/cie
-                h5 class="text-muted"eNo performance reviews found/h5e
-                p class="text-muted"eStart your first performance review./pe
-                ca href="{% url 'hr:performance_review_add' %}" class="btn btn-primary"e
-                    ci class="fas fa-plus me-2"e/cieNew Review
-                /cae
-            /dive
+            <div class="text-center py-5">
+                <i class="fas fa-star fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No performance reviews found</h5>
+                <p class="text-muted">Start your first performance review.</p>
+                <a href="{% url 'hr:performance_review_add' %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>New Review
+                </a>
+            </div>
         {% endif %}
-    /dive
-/dive
+    </div>
+</div>
 
 {% endblock %}
 
 {% block scripts %}
-cscripte
+<script>
 document.getElementById('searchInput').addEventListener('input', function() {
     const searchTerm = this.value.toLowerCase();
     const rows = document.querySelectorAll('tbody tr');
@@ -142,5 +142,5 @@ function deleteReview(reviewId) {
         });
     }
 }
-/scripte
+</script>
 {% endblock %}
