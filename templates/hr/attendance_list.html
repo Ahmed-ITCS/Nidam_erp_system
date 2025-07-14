@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Attendance List{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Attendance</h1>
+    <a href="{% url 'hr:attendance_add' %}" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Mark Attendance
+    </a>
+</div>
+
+cdiv class="card"e
+    cdiv class="card-header"e
+        cdiv class="row align-items-center"e
+            cdiv class="col"e
+                ch5 class="card-title mb-0"eAll Attendance Records/ch5e
+            /dive
+            cdiv class="col-auto"e
+                cdiv class="input-group"e
+                    cinput type="text" class="form-control" placeholder="Search records..." id="searchInput"e
+                    cbutton class="btn btn-outline-secondary" type="button"e
+                        ci class="fas fa-search"e/cie
+                    /buttone
+                /dive
+            /dive
+        /dive
+    /dive
+    cdiv class="card-body p-0"e
+        {% if attendance_records %}
+            cdiv class="table-responsive"e
+                ctable class="table table-hover mb-0"e
+                    cthead class="table-light"e
+                        ctre
+                            ctheEmployee/cthe
+                            ctheDate/cthe
+                            ctheCheck-In/cthe
+                            ctheCheck-Out/cthe
+                            ctheHours Worked/cthe
+                            ctheStatus/cthe
+                            ctheActions/cthe
+                        /ctre
+                    /theade
+                    ctbodye
+                        {% for record in attendance_records %}
+                        ctre
+                            ctde
+                                cdiv class="d-flex align-items-center"e
+                                    cdiv class="avatar-sm me-3"e
+                                        {% if record.employee.photo %}
+                                            cimg src="{{ record.employee.photo.url }}" alt="{{ record.employee.full_name }}" class="avatar-img rounded-circle"e
+                                        {% else %}
+                                            cdiv class="avatar-title bg-primary rounded-circle"e
+                                                {{ record.employee.first_name|first }}{{ record.employee.last_name|first }}
+                                            /dive
+                                        {% endif %}
+                                    /dive
+                                    cdive
+                                        ca href="{% url 'hr:employee_detail' record.employee.id %}" class="text-decoration-none fw-medium"e
+                                            {{ record.employee.full_name }}
+                                        /cae
+                                    /dive
+                                /dive
+                            /tde
+                            ctde
+                                cspan class="text-muted"e{{ record.date|date:"M d, Y" }}/cspane
+                            /tde
+                            ctde
+                                cspan class="text-muted"e{{ record.check_in_time }}/cspane
+                            /tde
+                            ctde
+                                cspan class="text-muted"e{{ record.check_out_time }}/cspane
+                            /tde
+                            ctde
+                                cspan class="fw-medium"e{{ record.hours_worked }}/cspane
+                            /tde
+                            ctde
+                                {% if record.status == 'present' %}
+                                    cspan class="badge bg-success"ePresent/spane
+                                {% elif record.status == 'absent' %}
+                                    cspan class="badge bg-danger"eAbsent/spane
+                                {% elif record.status == 'late' %}
+                                    cspan class="badge bg-warning"eLate/spane
+                                {% endif %}
+                            /tde
+                            ctde
+                                cdiv class="btn-group btn-group-sm"e
+                                    ca href="{% url 'hr:attendance_edit' record.id %}" class="btn btn-outline-primary"e
+                                        ci class="fas fa-edit"e/cie
+                                    /cae
+                                    ca href="{% url 'hr:attendance_detail' record.id %}" class="btn btn-outline-info"e
+                                        ci class="fas fa-eye"e/cie
+                                    /cae
+                                    cbutton class="btn btn-outline-danger" onclick="deleteAttendanceRecord({{ record.id }})"e
+                                        ci class="fas fa-trash"e/cie
+                                    /buttone
+                                /dive
+                            /tde
+                        /tre
+                        {% endfor %}
+                    /tbodye
+                /tablee
+            /dive
+        {% else %}
+            cdiv class="text-center py-5"e
+                ci class="fas fa-calendar-check fa-3x text-muted mb-3"e/cie
+                ch5 class="text-muted"eNo attendance records found/ch5e
+                cp class="text-muted"eStart by marking attendance for employees./cpe
+                ca href="{% url 'hr:attendance_add' %}" class="btn btn-primary"e
+                    ci class="fas fa-plus me-2"e/cieMark Attendance
+                /cae
+            /dive
+        {% endif %}
+    /dive
+/dive
+
+{% endblock %}
+
+{% block scripts %}
+cscripte
+document.getElementById('searchInput').addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const rows = document.querySelectorAll('tbody tr');
+    
+    rows.forEach(row =e {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+    });
+});
+
+function deleteAttendanceRecord(recordId) {
+    if (confirm('Are you sure you want to delete this attendance record?')) {
+        fetch(`/hr/attendance/${recordId}/delete/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        }).then(response =e {
+            if (response.ok) {
+                location.reload();
+            }
+        });
+    }
+}
+/scripte
+{% endblock %}

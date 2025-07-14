@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if attendance %}Edit Attendance{% else %}Add Attendance{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">{% if attendance %}Edit Attendance{% else %}Add Attendance{% endif %}</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="form-group mb-3">
+                            <label for="employee">Employee:</label>
+                            <select class="form-control" id="employee" name="employee" required>
+                                <option value="">Select Employee</option>
+                                {% comment %}
+                                <!-- This would be populated with employees from the view -->
+                                {% for employee in employees %}
+                                    <option value="{{ employee.id }}" {% if attendance.employee.id == employee.id %}selected{% endif %}>
+                                        {{ employee.user.first_name }} {{ employee.user.last_name }}
+                                    </option>
+                                {% endfor %}
+                                {% endcomment %}
+                            </select>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="date">Date:</label>
+                            <input type="date" class="form-control" id="date" name="date" 
+                                   value="{% if attendance %}{{ attendance.date|date:'Y-m-d' }}{% endif %}" required>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="time_in">Time In:</label>
+                            <input type="time" class="form-control" id="time_in" name="time_in" 
+                                   value="{% if attendance %}{{ attendance.time_in|time:'H:i' }}{% endif %}" required>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="time_out">Time Out:</label>
+                            <input type="time" class="form-control" id="time_out" name="time_out" 
+                                   value="{% if attendance %}{{ attendance.time_out|time:'H:i' }}{% endif %}">
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="break_time">Break Time (minutes):</label>
+                            <input type="number" class="form-control" id="break_time" name="break_time" 
+                                   value="{% if attendance %}{{ attendance.break_time }}{% endif %}" min="0">
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="status">Status:</label>
+                            <select class="form-control" id="status" name="status" required>
+                                <option value="">Select Status</option>
+                                <option value="present" {% if attendance.status == 'present' %}selected{% endif %}>Present</option>
+                                <option value="absent" {% if attendance.status == 'absent' %}selected{% endif %}>Absent</option>
+                                <option value="late" {% if attendance.status == 'late' %}selected{% endif %}>Late</option>
+                                <option value="half_day" {% if attendance.status == 'half_day' %}selected{% endif %}>Half Day</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="notes">Notes:</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3">{% if attendance %}{{ attendance.notes }}{% endif %}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">
+                                {% if attendance %}Update Attendance{% else %}Add Attendance{% endif %}
+                            </button>
+                            <a href="{% url 'hr:attendance_list' %}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Invoices{% endblock %}
+
+{% block page_actions %}
+<a href="{% url 'sales:invoice_add' %}" class="btn btn-primary">
+    <i class="fas fa-plus me-2"></i>New Invoice
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">Invoices</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Invoice #</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th>Due Date</th>
+                        <th>Amount</th>
+                        <th>Balance</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for invoice in invoices %}
+                    <tr>
+                        <td><span class="fw-medium">{{ invoice.invoice_number }}</span></td>
+                        <td>{{ invoice.customer.name }}</td>
+                        <td>{{ invoice.invoice_date|date:"M d, Y" }}</td>
+                        <td>{{ invoice.due_date|date:"M d, Y" }}</td>
+                        <td class="fw-medium">${{ invoice.total_amount|floatformat:2 }}</td>
+                        <td class="{% if invoice.balance > 0 %}text-danger{% else %}text-success{% endif %} fw-medium">
+                            ${{ invoice.balance|floatformat:2 }}
+                        </td>
+                        <td>
+                            <span class="badge bg-{% if invoice.status == 'paid' %}success{% elif invoice.status == 'overdue' %}danger{% else %}warning{% endif %}">
+                                {{ invoice.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{% url 'sales:invoice_detail' invoice.pk %}" class="btn btn-outline-primary">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="#" class="btn btn-outline-success">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center py-4">
+                            <div class="text-muted">
+                                <i class="fas fa-file-invoice fa-2x mb-3"></i>
+                                <p>No invoices found. <a href="{% url 'sales:invoice_add' %}">Create your first invoice</a></p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

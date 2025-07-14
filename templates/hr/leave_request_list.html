@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Leave Requests{% endblock %}
+
+{% block content %}
+cdiv class="d-flex justify-content-between align-items-center mb-4"e
+    ch1 class="h3 mb-0"eLeave Requests/ch1e
+    ca href="{% url 'hr:leave_request_add' %}" class="btn btn-primary"e
+        ci class="fas fa-plus me-2"e/cieNew Leave Request
+    /cae
+/dive
+
+cdiv class="card"e
+    cdiv class="card-header"e
+        cdiv class="row align-items-center"e
+            cdiv class="col"e
+                ch5 class="card-title mb-0"eAll Leave Requests/ch5e
+            /dive
+            cdiv class="col-auto"e
+                cdiv class="input-group"e
+                    cinput type="text" class="form-control" placeholder="Search requests..." id="searchInput"e
+                    cbutton class="btn btn-outline-secondary" type="button"e
+                        ci class="fas fa-search"e/cie
+                    /buttone
+                /dive
+            /dive
+        /dive
+    /dive
+    cdiv class="card-body p-0"e
+        {% if leave_requests %}
+            cdiv class="table-responsive"e
+                ctable class="table table-hover mb-0"e
+                    cthead class="table-light"e
+                        ctre
+                            ctheEmployee/cthe
+                            ctheLeave Type/cthe
+                            ctheStart Date/cthe
+                            ctheEnd Date/cthe
+                            ctheDuration/cthe
+                            ctheStatus/cthe
+                            ctheActions/cthe
+                        /ctre
+                    /theade
+                    ctbodye
+                        {% for request in leave_requests %}
+                        ctre
+                            ctde
+                                cdiv class="d-flex align-items-center"e
+                                    cdiv class="avatar-sm me-3"e
+                                        {% if request.employee.photo %}
+                                            cimg src="{{ request.employee.photo.url }}" alt="{{ request.employee.full_name }}" class="avatar-img rounded-circle"e
+                                        {% else %}
+                                            cdiv class="avatar-title bg-primary rounded-circle"e
+                                                {{ request.employee.first_name|first }}{{ request.employee.last_name|first }}
+                                            /dive
+                                        {% endif %}
+                                    /dive
+                                    cdive
+                                        ca href="{% url 'hr:employee_detail' request.employee.id %}" class="text-decoration-none fw-medium"e
+                                            {{ request.employee.full_name }}
+                                        /cae
+                                    /dive
+                                /dive
+                            /tde
+                            ctde
+                                cspan class="text-muted"e{{ request.leave_type }}/cspane
+                            /tde
+                            ctde
+                                cspan class="text-muted"e{{ request.start_date|date:"M d, Y" }}/cspane
+                            /tde
+                            ctde
+                                cspan class="text-muted"e{{ request.end_date|date:"M d, Y" }}/cspane
+                            /tde
+                            ctde
+                                cspan class="fw-medium"e{{ request.duration }} days/cspane
+                            /tde
+                            ctde
+                                {% if request.status == 'pending' %}
+                                    cspan class="badge bg-warning"ePending/spane
+                                {% elif request.status == 'approved' %}
+                                    cspan class="badge bg-success"eApproved/spane
+                                {% elif request.status == 'rejected' %}
+                                    cspan class="badge bg-danger"eRejected/spane
+                                {% endif %}
+                            /tde
+                            ctde
+                                cdiv class="btn-group btn-group-sm"e
+                                    ca href="{% url 'hr:leave_request_edit' request.id %}" class="btn btn-outline-primary"e
+                                        ci class="fas fa-edit"e/cie
+                                    /cae
+                                    ca href="{% url 'hr:leave_request_detail' request.id %}" class="btn btn-outline-info"e
+                                        ci class="fas fa-eye"e/cie
+                                    /cae
+                                    cbutton class="btn btn-outline-danger" onclick="deleteLeaveRequest({{ request.id }})"e
+                                        ci class="fas fa-trash"e/cie
+                                    /buttone
+                                /dive
+                            /tde
+                        /tre
+                        {% endfor %}
+                    /tbodye
+                /tablee
+            /dive
+        {% else %}
+            cdiv class="text-center py-5"e
+                ci class="fas fa-calendar-alt fa-3x text-muted mb-3"e/cie
+                ch5 class="text-muted"eNo leave requests found/ch5e
+                cp class="text-muted"eCreate your first leave request./cpe
+                ca href="{% url 'hr:leave_request_add' %}" class="btn btn-primary"e
+                    ci class="fas fa-plus me-2"e/cieNew Leave Request
+                /cae
+            /dive
+        {% endif %}
+    /dive
+/dive
+
+{% endblock %}
+
+{% block scripts %}
+cscripte
+document.getElementById('searchInput').addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const rows = document.querySelectorAll('tbody tr');
+    
+    rows.forEach(row =e {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+    });
+});
+
+function deleteLeaveRequest(requestId) {
+    if (confirm('Are you sure you want to delete this leave request?')) {
+        fetch(`/hr/leave-requests/${requestId}/delete/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        }).then(response =e {
+            if (response.ok) {
+                location.reload();
+            }
+        });
+    }
+}
+/scripte
+{% endblock %}

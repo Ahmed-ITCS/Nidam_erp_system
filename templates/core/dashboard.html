@@ -3,20 +3,19 @@
 {% block page_title %}Dashboard{% endblock %}
 
 {% block content %}
-<div class="row">
+<div class="row g-4 mb-4">
     <!-- Sales Stats Cards -->
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card card-stats text-white">
+    <div class="col-xl-3 col-md-6">
+        <div class="card card-stats text-white h-100">
             <div class="card-body">
-                <div class="row">
-                    <div class="col">
-                        <h5 class="card-title text-uppercase text-muted mb-0">Customers</h5>
-                        <span class="h2 font-weight-bold mb-0">{{ total_customers }}</span>
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <p class="text-white-50 mb-1 small text-uppercase fw-medium">Total Customers</p>
+                        <h2 class="fw-bold mb-0">{{ total_customers }}</h2>
+                        <small class="text-white-50">+12% from last month</small>
                     </div>
-                    <div class="col-auto">
-                        <div class="icon icon-shape bg-white text-primary rounded-circle shadow">
-                            <i class="fas fa-users"></i>
-                        </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
                     </div>
                 </div>
             </div>

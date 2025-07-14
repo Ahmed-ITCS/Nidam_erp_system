@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Quotes{% endblock %}
+
+{% block page_actions %}
+<a href="{% url 'sales:quote_add' %}" class="btn btn-primary">
+    <i class="fas fa-plus me-2"></i>New Quote
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">Sales Quotes</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Quote #</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th>Valid Until</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for quote in quotes %}
+                    <tr>
+                        <td><span class="fw-medium">{{ quote.quote_number }}</span></td>
+                        <td>{{ quote.customer.name }}</td>
+                        <td>{{ quote.quote_date|date:"M d, Y" }}</td>
+                        <td>{{ quote.valid_until|date:"M d, Y" }}</td>
+                        <td class="fw-medium">${{ quote.total_amount|floatformat:2 }}</td>
+                        <td>
+                            <span class="badge bg-{% if quote.status == 'accepted' %}success{% elif quote.status == 'rejected' %}danger{% elif quote.status == 'expired' %}warning{% else %}primary{% endif %}">
+                                {{ quote.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{% url 'sales:quote_detail' quote.pk %}" class="btn btn-outline-primary">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="#" class="btn btn-outline-secondary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center py-4">
+                            <div class="text-muted">
+                                <i class="fas fa-file-alt fa-2x mb-3"></i>
+                                <p>No quotes found. <a href="{% url 'sales:quote_add' %}">Create your first quote</a></p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

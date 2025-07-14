@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Accounting Dashboard{% endblock %}
+
+{% block content %}
+<div class="row g-4 mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="card card-stats text-white h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <p class="text-white-50 mb-1 small text-uppercase fw-medium">Total Accounts</p>
+                        <h2 class="fw-bold mb-0">{{ total_accounts }}</h2>
+                        <small class="text-white-50">Chart of Accounts</small>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-list"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card card-stats-success text-white h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <p class="text-white-50 mb-1 small text-uppercase fw-medium">Active Vendors</p>
+                        <h2 class="fw-bold mb-0">{{ total_vendors }}</h2>
+                        <small class="text-white-50">Supplier network</small>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card card-stats-warning text-white h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <p class="text-white-50 mb-1 small text-uppercase fw-medium">Pending Bills</p>
+                        <h2 class="fw-bold mb-0">{{ pending_bills }}</h2>
+                        <small class="text-white-50">Awaiting payment</small>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card card-stats-info text-white h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <p class="text-white-50 mb-1 small text-uppercase fw-medium">Total Payments</p>
+                        <h2 class="fw-bold mb-0">{{ total_payments }}</h2>
+                        <small class="text-white-50">All transactions</small>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Financial Overview</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="financialChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'accounting:journal_entry_add' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-plus me-2"></i>New Journal Entry
+                    </a>
+                    <a href="{% url 'accounting:bill_add' %}" class="btn btn-outline-warning">
+                        <i class="fas fa-file-invoice-dollar me-2"></i>Record Bill
+                    </a>
+                    <a href="{% url 'accounting:payment_add' %}" class="btn btn-outline-success">
+                        <i class="fas fa-credit-card me-2"></i>Record Payment
+                    </a>
+                    <a href="{% url 'accounting:reports' %}" class="btn btn-outline-info">
+                        <i class="fas fa-chart-area me-2"></i>View Reports
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+const ctx = document.getElementById('financialChart').getContext('2d');
+const chart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Assets', 'Liabilities', 'Equity', 'Revenue', 'Expenses'],
+        datasets: [{
+            data: [40, 25, 15, 12, 8],
+            backgroundColor: [
+                'rgba(99, 102, 241, 0.8)',
+                'rgba(245, 158, 11, 0.8)',
+                'rgba(16, 185, 129, 0.8)',
+                'rgba(6, 182, 212, 0.8)',
+                'rgba(239, 68, 68, 0.8)'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

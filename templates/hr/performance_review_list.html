@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Performance Review List{% endblock %}
+
+{% block content %}
+cdiv class="d-flex justify-content-between align-items-center mb-4"e
+    ch1 class="h3 mb-0"ePerformance Reviews/ch1e
+    ca href="{% url 'hr:performance_review_add' %}" class="btn btn-primary"e
+        ci class="fas fa-plus me-2"e/cieNew Review
+    /cae
+/dive
+
+cdiv class="card"e
+    cdiv class="card-header"e
+        cdiv class="row align-items-center"e
+            cdiv class="col"e
+                ch5 class="card-title mb-0"eAll Performance Reviews/ch5e
+            /dive
+            cdiv class="col-auto"e
+                cdiv class="input-group"e
+                    cinput type="text" class="form-control" placeholder="Search reviews..." id="searchInput"e
+                    cbutton class="btn btn-outline-secondary" type="button"e
+                        ci class="fas fa-search"e/cie
+                    /buttone
+                /dive
+            /dive
+        /dive
+    /dive
+    cdiv class="card-body p-0"e
+        {% if performance_reviews %}
+            cdiv class="table-responsive"e
+                ctable class="table table-hover mb-0"e
+                    cthead class="table-light"e
+                        ctre
+                            ctheEmployee/cthe
+                            ctheReview Date/cthe
+                            ctheReviewer/cthe
+                            ctheScore/cthe
+                            ctheComments/cthe
+                            ctheStatus/cthe
+                            ctheActions/cthe
+                        /ctre
+                    /theade
+                    ctbodye
+                        {% for review in performance_reviews %}
+                        ctre
+                            ctde
+                                cdiv class="d-flex align-items-center"e
+                                    cdiv class="avatar-sm me-3"e
+                                        {% if review.employee.photo %}
+                                            cimg src="{{ review.employee.photo.url }}" alt="{{ review.employee.full_name }}" class="avatar-img rounded-circle"e
+                                        {% else %}
+                                            cdiv class="avatar-title bg-primary rounded-circle"e
+                                                {{ review.employee.first_name|first }}{{ review.employee.last_name|first }}
+                                            /dive
+                                        {% endif %}
+                                    /dive
+                                    cdive
+                                        ca href="{% url 'hr:employee_detail' review.employee.id %}" class="text-decoration-none fw-medium"e
+                                            {{ review.employee.full_name }}
+                                        /cae
+                                    /dive
+                                /dive
+                            /tde
+                            ctde
+                                cspan class="text-muted"e{{ review.date|date:"M d, Y" }}/cspane
+                            /tde
+                            ctde
+                                span class="text-muted"e{{ review.reviewer.full_name }}/spane
+                            /tde
+                            ctde
+                                cspan class="fw-medium"e{{ review.score }}/cspane
+                            /tde
+                            ctde
+                                cspan class="text-muted"e{{ review.comments|truncatechars:50 }}/cspane
+                            /tde
+                            ctde
+                                {% if review.status == 'pending' %}
+                                    cspan class="badge bg-warning"ePending/spane
+                                {% elif review.status == 'completed' %}
+                                    cspan class="badge bg-success"eCompleted/spane
+                                {% elif review.status == 'canceled' %}
+                                    cspan class="badge bg-danger"eCanceled/spane
+                                {% endif %}
+                            /tde
+                            ctde
+                                cdiv class="btn-group btn-group-sm"e
+                                    ca href="{% url 'hr:performance_review_edit' review.id %}" class="btn btn-outline-primary"e
+                                        ci class="fas fa-edit"e/cie
+                                    /cae
+                                    ca href="{% url 'hr:performance_review_detail' review.id %}" class="btn btn-outline-info"e
+                                        ci class="fas fa-eye"e/cie
+                                    /cae
+                                    cbutton class="btn btn-outline-danger" onclick="deleteReview({{ review.id }})"e
+                                        ci class="fas fa-trash"e/cie
+                                    /buttone
+                                /deve
+                            /tde
+                        /tre
+                        {% endfor %}
+                    /tbodye
+                /tablee
+            /dive
+        {% else %}
+            cdiv class="text-center py-5"e
+                ci class="fas fa-star fa-3x text-muted mb-3"e/cie
+                h5 class="text-muted"eNo performance reviews found/h5e
+                p class="text-muted"eStart your first performance review./pe
+                ca href="{% url 'hr:performance_review_add' %}" class="btn btn-primary"e
+                    ci class="fas fa-plus me-2"e/cieNew Review
+                /cae
+            /dive
+        {% endif %}
+    /dive
+/dive
+
+{% endblock %}
+
+{% block scripts %}
+cscripte
+document.getElementById('searchInput').addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const rows = document.querySelectorAll('tbody tr');
+    
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+    });
+});
+
+function deleteReview(reviewId) {
+    if (confirm('Are you sure you want to delete this review?')) {
+        fetch(`/hr/performance-reviews/${reviewId}/delete/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        }).then(response => {
+            if (response.ok) {
+                location.reload();
+            }
+        });
+    }
+}
+/scripte
+{% endblock %}
